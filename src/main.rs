@@ -6,10 +6,11 @@ pub mod commands;
 
 use crate::player::Player;
 use std::io;
-use std::io::Read;
+use std::io::{Read, Write};
 use crate::commands::{Command, CommandFail};
 use std::str::FromStr;
 use crate::person::Person;
+use strum::IntoEnumIterator;
 
 fn main() {
     let mut stdin = io::stdin();
@@ -17,23 +18,58 @@ fn main() {
     let mut people_to_hack: Vec<Person> = Vec::new();
 
     let mut line = String::new();
-    loop {
+    let mut is_end = false;
+    while !is_end {
         print!("> ");
         stdin.read_line(&mut line).unwrap();
-        let command = Command::from_str(line.trim()).unwrap();
-        match command {
-            Command::FIND => find(&mut player, &mut people_to_hack),
-            Command::HACK => hack(&mut player, &mut people_to_hack),
-            Command::BRIBE => bribe(&mut player),
-            Command::INFO => println!("{}", player.info()),
-            Command::SEND => send(&mut player, &mut people_to_hack),
-            Command::LEARN => learn(&mut player),
-            _ => (),
+        let command = Command::from_str(line.trim());
+        if let Ok(command) = command {
+            match command {
+                Command::FIND => find(&mut player, &mut people_to_hack),
+                Command::HACK => hack(&mut player, &mut people_to_hack),
+                Command::BRIBE => bribe(&mut player),
+                Command::INFO => println!("{}", player.info()),
+                Command::SEND => send(&mut player, &mut people_to_hack),
+                Command::LEARN => learn(&mut player),
+                Command::WIN => win(&player),
+                Command::SURRENDER => is_end = true,
+                Command::COMMANDS => print_commands(),
+            }
+        } else {
+            print!("Command '{}' is not supported. ", line.trim());
+            print_commands();
         }
         line.clear();
-        if command == Command::SURRENDER {
-            return;
+
+        if player.criminality_level >= 5 {
+            println!("Game over. Your criminality level is {}. ", player.criminality_level);
+            is_end = true;
         }
+    }
+}
+
+fn print_commands() {
+    print!("Supported commands are ");
+    let mut first = true;
+    for command in Command::iter() {
+        if first {
+            first = false;
+        } else {
+            print!(" ,");
+        }
+        let command = format!("{}", command).to_ascii_lowercase();
+        print!("{:?}", command);
+    }
+    println!(".");
+    io::stdout().flush().unwrap();
+
+}
+
+fn win(player: &Player) {
+    if player.win() {
+        println!("Congrats, you won!");
+    } else {
+        println!("You don't have enough BTC to win! At least 5 BTC is needed.");
     }
 }
 

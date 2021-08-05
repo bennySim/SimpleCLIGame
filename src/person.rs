@@ -16,7 +16,7 @@ pub(crate) struct Person {
 impl Person {
     pub(crate) fn generate() -> Option<Person> {
         let mut rng = rand::thread_rng();
-        let prop = rng.gen_range(1..=10);
+        let prop = rng.gen_range(0..=10);
         let person_type = match prop {
             1..=6 => Some(PersonType::Common),
             7..=9 => Some(PersonType::Rare),

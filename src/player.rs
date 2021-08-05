@@ -80,7 +80,7 @@ impl Player {
         format!("{:?}", self)
     }
 
-    fn win(&self) -> bool {
+    pub(crate) fn win(&self) -> bool {
         if self.valet.num_of_btc >= 5.0 {
             true
         } else {
