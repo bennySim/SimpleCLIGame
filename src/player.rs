@@ -14,7 +14,7 @@ pub(crate) struct Player {
     ip_address: String,
     valet: Valet,
     hacking_skill: u8,
-    criminality_level: u8, //TODO enum
+    criminality_level: u8,
 }
 
 impl Player {

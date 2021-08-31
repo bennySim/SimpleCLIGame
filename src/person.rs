@@ -35,9 +35,9 @@ impl Person {
     fn generate_person_type() -> Option<PersonType> {
         let random_number = rand::thread_rng().gen_range(0..=10);
         match random_number {
-            1..=6 => Some(PersonType::Common),
-            7..=9 => Some(PersonType::Rare),
-            10 => Some(PersonType::Epic),
+            1..=6 => Some(PersonType::Normal),
+            7..=9 => Some(PersonType::Infrequent),
+            10 => Some(PersonType::Unique),
             _ => None,
         }
     }
@@ -48,9 +48,9 @@ impl Person {
     }
     fn get_defense_values(person_type: &PersonType) -> Vec<u8> {
         match person_type {
-            PersonType::Common => vec![0, 10],
-            PersonType::Rare => vec![15],
-            PersonType::Epic => vec![10, 15, 20]
+            PersonType::Normal => vec![0, 10],
+            PersonType::Infrequent => vec![15],
+            PersonType::Unique => vec![10, 15, 20]
         }
     }
 
@@ -98,7 +98,7 @@ impl Person {
 
 #[derive(PartialEq, PartialOrd, Copy, Clone)]
 pub(crate) enum PersonType {
-    Common,
-    Rare,
-    Epic,
+    Normal,
+    Infrequent,
+    Unique,
 }

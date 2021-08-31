@@ -24,7 +24,7 @@ impl Valet {
     }
     pub(crate) fn generate(person_type: &PersonType) -> Option<Valet> {
         let mut rng = rand::thread_rng();
-        if *person_type == PersonType::Common {
+        if *person_type == PersonType::Normal {
             let prop_of_valet = rng.gen_range(0.0..=1.0);
             if prop_of_valet < 0.25 {
                 return None;
@@ -43,9 +43,9 @@ impl Valet {
     fn get_person_type_num_of_btc(person_type: &PersonType) -> f64 {
         let mut rng = rand::thread_rng();
         match person_type {
-            PersonType::Common => rng.gen_range(0.0..=0.5),
-            PersonType::Rare => rng.gen_range(0.5..=1.5),
-            PersonType::Epic => rng.gen_range(1.0..=2.5)
+            PersonType::Normal => rng.gen_range(0.0..=0.5),
+            PersonType::Infrequent => rng.gen_range(0.5..=1.5),
+            PersonType::Unique => rng.gen_range(1.0..=2.5)
         }
     }
 
