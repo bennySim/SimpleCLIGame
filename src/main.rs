@@ -17,9 +17,11 @@ fn main() {
     let mut stdin = io::stdin();
     let mut player = create_player(&mut stdin);
     let mut people_to_hack: Vec<Person> = Vec::new();
-
     let mut line = String::new();
     let mut is_end = false;
+
+    print_commands();
+
     while !is_end {
         is_end |= read_command(&mut stdin, &mut player, &mut people_to_hack, &mut line);
         is_end |= check_game_over(&mut player, &mut people_to_hack)
