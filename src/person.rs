@@ -1,33 +1,25 @@
 use rand::Rng;
 use crate::valet::Valet;
 use crate::generator::Generator;
-use crate::commands::CommandFail;
+use crate::commands::CommandError;
+use std::slice::Iter;
+use std::iter::Cycle;
 
 pub(crate) struct Person {
-    person_type: PersonType,
-    pub(crate) name: String,
+    name: String,
     ip_address: String,
     valet: Option<Valet>,
     defense_values: Vec<u8>,
     defense_no: u8,
-    pub(crate) current_success: u8,
+    current_success: u8,
 }
 
 impl Person {
     pub(crate) fn generate() -> Option<Person> {
-        let mut rng = rand::thread_rng();
-        let prop = rng.gen_range(0..=10);
-        let person_type = match prop {
-            1..=6 => Some(PersonType::Common),
-            7..=9 => Some(PersonType::Rare),
-            10 => Some(PersonType::Epic),
-            _ => None,
-        };
-
         let generator = Generator::new();
-        if let Some(person_type) = person_type {
+
+        if let Some(person_type) = Person::generate_person_type() {
             Some(Person {
-                person_type,
                 name: generator.get_random_name(),
                 ip_address: generator.get_random_ip_address(),
                 valet: Valet::generate(&person_type),
@@ -37,6 +29,16 @@ impl Person {
             })
         } else {
             None
+        }
+    }
+
+    fn generate_person_type() -> Option<PersonType> {
+        let random_number = rand::thread_rng().gen_range(0..=10);
+        match random_number {
+            1..=6 => Some(PersonType::Common),
+            7..=9 => Some(PersonType::Rare),
+            10 => Some(PersonType::Epic),
+            _ => None,
         }
     }
     pub fn get_defense(&mut self) -> u8 {
@@ -52,29 +54,45 @@ impl Person {
         }
     }
 
-    pub(crate) fn hack(&mut self, hacking_skill : u8) -> bool {
-        let mut rng = rand::thread_rng();
-        self.current_success += rng.gen_range(0..=hacking_skill);
+    pub(crate) fn hack(&mut self, hacking_skill : u8) -> Result<u8, ()> {
+        self.increase_current_success(hacking_skill);
+
         let def = self.get_defense();
         if (self.current_success as i16) - (def as i16) <= 0 {
-            false
+            Err(())
         } else {
             self.current_success -= def;
-            true
+            Ok(self.current_success)
         }
     }
 
-    pub(crate) fn send(&mut self) -> Result<f64, CommandFail> {
+    fn increase_current_success(&mut self, hacking_skill: u8) {
+        if self.current_success == 100 {
+            return;
+        }
+        let mut rng = rand::thread_rng();
+        self.current_success += rng.gen_range(0..=hacking_skill);
+
+        if self.current_success > 100 {
+            self.current_success = 100;
+        }
+    }
+
+    pub(crate) fn send(&mut self) -> Result<f64, CommandError> {
         let mut rng = rand::thread_rng();
         let success = rng.gen_range(0..=100);
         if success > self.current_success {
-            return Err(CommandFail::COMMAND_FAIL)
+            return Err(CommandError::Discovered)
         }
         if let Some(valet) = &self.valet {
-            Ok(valet.num_of_btc)
+            Ok(valet.num_of_btc())
         } else {
-            Err(CommandFail::NO_VALET)
+            Err(CommandError::NoValet)
         }
+    }
+
+    pub(crate) fn name(&self) -> &String {
+        &self.name
     }
 }
 

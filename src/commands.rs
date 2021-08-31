@@ -1,5 +1,4 @@
 use std::str::FromStr;
-use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
 #[derive(Debug, PartialEq, EnumIter)]
@@ -34,9 +33,9 @@ impl FromStr for Command {
     }
 }
 
-pub(crate) enum CommandFail {
-    COMMAND_FAIL,
-    NO_VALET,
-    NOT_ENOUGH_BTC,
-    NO_PERSON,
+pub(crate) enum CommandError {
+    Discovered,
+    NoValet,
+    NotEnoughBtc,
+    NoPerson,
 }

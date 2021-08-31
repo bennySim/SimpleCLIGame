@@ -1,4 +1,3 @@
-use std::fs;
 use rand::Rng;
 use std::fs::File;
 use std::io::{BufReader, BufRead};
@@ -27,7 +26,7 @@ impl Generator {
         let mut rng = rand::thread_rng();
         let line_no = rng.gen_range(1..self.data.len());
         let line : String = self.data[line_no].clone();
-        let line : Vec<String> = line.split(',').map(|f| String::from(f.clone())).collect();
+        let line : Vec<String> = line.split(',').map(|f| String::from(<&str>::clone(&f))).collect();
         Line {
             name : line[0].clone(),
             ip : line[1].clone(),
