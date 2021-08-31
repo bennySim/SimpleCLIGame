@@ -1,2 +1,2 @@
-# CyberGame
+# SimpleCLIGame
 A simple CLI game imitating hacking people and their accounts using commands hack, send, find, bribe...
